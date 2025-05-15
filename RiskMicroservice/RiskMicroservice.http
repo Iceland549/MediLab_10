@@ -1,0 +1,6 @@
+@RiskMicroservice_HostAddress = http://localhost:5034
+
+GET {{RiskMicroservice_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
