@@ -21,7 +21,7 @@ namespace PatientMicroservice.Application.Services
             var patients = await _repository.GetAllAsync();
             return patients.Select(p => ToDto(p)).ToList();
         }
-        public async Task<PatientDto> GetPatientByIdAsync(int id)
+        public async Task<PatientDto?> GetPatientByIdAsync(int id)
         {
             var patient = await _repository.GetByIdAsync(id);
             return patient == null ? null : ToDto(patient);
