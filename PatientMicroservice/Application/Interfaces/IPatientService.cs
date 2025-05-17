@@ -7,7 +7,7 @@ namespace PatientMicroservice.Application.Interfaces
     public interface IPatientService
     {
         Task<List<PatientDto>> GetAllPatientsAsync();
-        Task<PatientDto> GetPatientByIdAsync(int id);
+        Task<PatientDto?> GetPatientByIdAsync(int id);
         Task AddPatientAsync(PatientDto patientDto);
         Task UpdatePatientAsync(int id, PatientDto patientDto);
         Task DeletePatientAsync(int id);
