@@ -86,8 +86,8 @@ namespace NoteMicroservice.Infrastructure.Data
                     Content = "Taille, Poids, Cholestérol, Vertige et Réaction",
                     DateCreated = DateTime.UtcNow,
                 }
-
             };
+            await _notesCollection.InsertManyAsync(notes);
         }
     }
 }
