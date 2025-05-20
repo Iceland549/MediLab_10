@@ -6,6 +6,6 @@ namespace RiskMicroservice.Infrastructure.Clients
 {
     public interface INoteClient
     {
-        Task<NoteDto?> GetNotesByPatientIdAsync(int patientId, string jwtToken);
+        Task<List<NoteDto>> GetNotesByPatientIdAsync(int patientId, string jwtToken);
     }
 }
