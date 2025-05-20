@@ -5,6 +5,6 @@ namespace RiskMicroservice.Application.Interfaces
 {
     public interface IRiskService
     {
-        Task AssessmentRiskAsync(int patientId, string jwtToken);
+        Task<RiskAssessmentDto?> AssessmentRiskAsync(int patientId, string jwtToken);
     }
 }
