@@ -8,8 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddScoped<IRiskService,RiskService>();
-builder.Services.AddScoped<IPatientClient, PatientClient>();
-builder.Services.AddScoped<INoteClient, NoteClient>();
+builder.Services.AddHttpClient<IPatientClient, PatientClient>();
+builder.Services.AddHttpClient<INoteClient, NoteClient>();
 
 builder.Services.AddControllers();
 
