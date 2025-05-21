@@ -18,7 +18,7 @@ namespace RiskMicroservice.Presentation.Controllers
             _riskService = riskService;
         }
 
-        [HttpGet("{patentId}")]
+        [HttpGet("{patientId}")]
         public async Task<IActionResult> GetRisk(int patientId)
         {
             var jwtToken = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
