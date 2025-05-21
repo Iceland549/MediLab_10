@@ -14,14 +14,14 @@ builder.Services.AddScoped<IPatientRepository, PatientRepository>();
 builder.Services.AddScoped<IPatientService, PatientService> ();
 builder.Services.AddControllers();
 
-builder.Services.AddAuthentication("Bearer")
-    .AddJwtBearer("Bearer", options =>
-    {
-        options.Authority = "http://mocalhost:5004";
-        //options.RequiredHttpsMetadata = false;
-        options.Audience = "patientapi";
-    });
-builder.Services.AddAuthorization();
+//builder.Services.AddAuthentication("Bearer")
+//    .AddJwtBearer("Bearer", options =>
+//    {
+//        options.Authority = "http://authmicroservice:8085";
+//        //options.RequiredHttpsMetadata = false;
+//        options.Audience = "patientmicroservice";
+//    });
+//builder.Services.AddAuthorization();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -40,9 +40,9 @@ app.UseRouting();
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication();
+//app.UseAuthentication();
 
-app.UseAuthorization();
+//app.UseAuthorization();
 
 app.MapControllers();
 
