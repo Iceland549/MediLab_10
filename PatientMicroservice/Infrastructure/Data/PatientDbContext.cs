@@ -18,7 +18,7 @@ namespace PatientMicroservice.Infrastructure.Data
                     Id = 1,
                     FirstName = "TestNone",
                     LastName = "Test",
-                    DateOfBirth = new DateTime(19966, 12, 31),
+                    DateOfBirth = new DateTime(1966, 12, 31),
                     Gender = "F",
                     Adress = "1 Brookside St",
                     PhoneNumber = "100-222-3333"
