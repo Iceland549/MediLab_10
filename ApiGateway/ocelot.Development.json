@@ -6,7 +6,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "authmicroservice",
-          "Port": 8085
+          "Port": 5001
         }
       ],
       "UpstreamPathTemplate": "/api/auth/{everything}",
@@ -18,7 +18,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "patientmicroservice",
-          "Port": 8080
+          "Port": 5002
         }
       ],
       "UpstreamPathTemplate": "/api/patients",
@@ -30,7 +30,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "patientmicroservice",
-          "Port": 8080
+          "Port": 5002
         }
       ],
       "UpstreamPathTemplate": "/api/patients/{everything}",
@@ -42,7 +42,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "notemicroservice",
-          "Port": 8081
+          "Port": 5003
         }
       ],
       "UpstreamPathTemplate": "/api/notes",
@@ -54,7 +54,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "notemicroservice",
-          "Port": 8081
+          "Port": 5003
         }
       ],
       "UpstreamPathTemplate": "/api/notes/{everything}",
@@ -66,7 +66,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "riskmicroservice",
-          "Port": 8082
+          "Port": 5004
         }
       ],
       "UpstreamPathTemplate": "/api/risk/{everything}",
