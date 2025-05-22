@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AuthMicroservice.Infrastructure.Data
 {
-    public class AuthDbContext : IdentityDbContext
+    public class AuthDbContext : IdentityDbContext<User>
     {
         public AuthDbContext(DbContextOptions<AuthDbContext> options) : base(options) { }
     }
