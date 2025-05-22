@@ -77,10 +77,10 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-using (var scope = app.Services.CreateScope()) 
+using (var scope = app.Services.CreateScope())
 {
-    var services = scope.ServiceProvider; 
-    await AuthMicroservice.Infrastructure.Data.AuthDbInitializer.SeedAsync(services); 
+    var services = scope.ServiceProvider;
+    await AuthMicroservice.Infrastructure.Data.AuthDbInitializer.SeedAsync(services);
 }
 
 app.Run();
