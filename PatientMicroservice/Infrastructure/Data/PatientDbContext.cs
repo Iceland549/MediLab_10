@@ -6,7 +6,7 @@ namespace PatientMicroservice.Infrastructure.Data
     public class PatientDbContext : DbContext 
     {
         public DbSet<Patient> Patients { get; set; }
-        public PatientDbContext(DbContextOptions options) : base(options) { }
+        public PatientDbContext(DbContextOptions<PatientDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
