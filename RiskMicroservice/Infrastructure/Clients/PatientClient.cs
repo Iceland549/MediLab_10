@@ -21,13 +21,14 @@ namespace RiskMicroservice.Infrastructure.Clients
         public async Task<PatientDto?> GetPatientByIdAsync(int patientId, string jwtToken)
         {
             var baseUrl = _configuration["PatientMicroserviceBaseUrl"];
-            var request = new HttpRequestMessage(HttpMethod.Get, $"{baseUrl}/api/patient/{patientId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{baseUrl}/api/patients/{patientId}");
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
             var response = await _httpClient.SendAsync(request);
             if (!response.IsSuccessStatusCode)
                 return null;
             var json = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<PatientDto>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            return JsonSerializer.Deserialize<PatientDto>(json, new JsonSerializerOptions
+            { PropertyNameCaseInsensitive = true });
         }
     }
 }
