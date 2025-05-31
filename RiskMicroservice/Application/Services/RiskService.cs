@@ -25,7 +25,7 @@ namespace RiskMicroservice.Application.Services
 
         private static readonly string[] Triggers = new[]
         {
-            "Hémoglobine A1C", "Microalbumine", "Poids", "Taille", "Fumeur", "Fumer", "Fume", "Anormale", "Anormales", "Cholestérol", "Vertige", "Rechute", "Réaction", "Antisorps"
+            "Hémoglobine A1C", "Microalbumine", "Poids", "Taille", "Fumeur", "Fumer", "Fume", "Anormale", "Anormales", "Cholestérol", "Vertige", "Rechute", "Réaction", "Anticorps"
         };
 
         public async Task<RiskAssessmentDto?> AssessmentRiskAsync(int patientId, string jwtToken)
@@ -44,9 +44,7 @@ namespace RiskMicroservice.Application.Services
                 .Select(note => note.Content!)
                 .ToList();
 
-            int triggerCount = notes
-                .Where(note => note.Content != null) // S'assurer que Content n'est pas null
-                .Select(note => note.Content!)       // Extraire la propriété Content (string)
+            int triggerCount = noteContents
                 .SelectMany(content => Triggers.Where(trigger =>
                     content.IndexOf(trigger, StringComparison.OrdinalIgnoreCase) >= 0))
                 .Count();
@@ -68,20 +66,23 @@ namespace RiskMicroservice.Application.Services
 
         private static string CalculateRiskLevel(int age, string gender, int triggerCount)
         {
+            // Prise en compte simultanée de l'âge, du sexe et du nombre de triggers
             if (triggerCount == 0) return "None";
-            if (age >= 30)
-            {
-                if (triggerCount >= 8) return "Early onset";
-                if (triggerCount >= 6) return "In Danger";
-                if (triggerCount >= 2) return "Borderline";
-            }
-            else
-            {
-                if (gender == "M" && triggerCount >= 5) return "Early onset";
-                if (gender == "F" && triggerCount >= 7) return "Early onset";
-                if (gender == "M" && triggerCount >= 3) return "In Danger";
-                if (gender == "F" && triggerCount >= 4) return "In Danger";
-            }
+
+            // Early onset
+            if (age < 30 && gender == "M" && triggerCount >= 5) return "Early onset";
+            if (age < 30 && gender == "F" && triggerCount >= 7) return "Early onset";
+            if (age >= 30 && triggerCount >= 8) return "Early onset";
+
+            // In Danger
+            if (age < 30 && gender == "M" && triggerCount >= 3) return "In Danger";
+            if (age < 30 && gender == "F" && triggerCount >= 4) return "In Danger";
+            if (age >= 30 && triggerCount >= 6) return "In Danger";
+
+            // Borderline
+            if (age >= 30 && triggerCount >= 2) return "Borderline";
+            if (age < 30 && triggerCount >= 2) return "Borderline";
+
             return "None";
         }
     }
