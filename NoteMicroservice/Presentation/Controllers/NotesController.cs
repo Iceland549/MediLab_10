@@ -38,8 +38,24 @@ namespace NoteMicroservice.Presentation.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] NoteDto noteDto)
         {
-            await _noteService.AddNoteAsync(noteDto);
-            return CreatedAtAction(nameof(GetById), new { id = noteDto.Id }, noteDto);
+            try
+            {
+                // Ajouter la note et récupérer l'ID généré
+                var generatedId = await _noteService.AddNoteAsync(noteDto);
+
+                // Mettre à jour noteDto avec l'ID généré
+                noteDto.Id = generatedId;
+
+                return CreatedAtAction(nameof(GetById), new { id = noteDto.Id }, noteDto);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erreur lors de l'ajout de la note : {ex.Message}");
+            }
         }
 
         [HttpPut("{id}")]
@@ -49,17 +65,29 @@ namespace NoteMicroservice.Presentation.Controllers
             if (existing == null)
                 return NotFound();
             await _noteService.UpdateNoteAsync(id, noteDto);
-            return NoContent();
+            var updatedNote = await _noteService.GetNoteByIdAsync(id);
+            return Ok(updatedNote);
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
-            var existing = await _noteService.GetNoteByIdAsync(id);
-            if (existing == null)
-                return NotFound();
-            await _noteService.DeleteNoteAsync(id);
-            return NoContent();
+            try
+            {
+                var existing = await _noteService.GetNoteByIdAsync(id);
+                if (existing == null)
+                    return NotFound();
+                await _noteService.DeleteNoteAsync(id);
+                return NoContent();
+            }
+            catch (FormatException)
+            {
+                return BadRequest("L'ID fourni n'est pas un ObjectId valide.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erreur lors de la suppression : {ex.Message}");
+            }
         }
     }
 }
