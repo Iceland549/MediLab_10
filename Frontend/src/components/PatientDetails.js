@@ -25,6 +25,7 @@ export default function PatientDetails({ patient }) {
       {patient.address && <p>Adresse : {patient.address}</p>}
       {patient.phoneNumber && <p>Téléphone : {patient.phoneNumber}</p>}
 
+      {/* On passe directement notes et setNotes au composant enfant */}
       <NotesList
         patientId={patient.id}
         notes={notes}
