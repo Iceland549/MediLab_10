@@ -29,22 +29,34 @@ namespace NoteMicroservice.Application.Services
             return note == null ? null : ToDto(note);
         }
 
-        public async Task AddNoteAsync(NoteDto noteDto)
+        public async Task<string> AddNoteAsync(NoteDto noteDto)
         {
             var note = FromDto(noteDto);
             await _repository.AddAsync(note);
+            return note.Id;
         }
 
         public async Task UpdateNoteAsync(string id, NoteDto noteDto)
         {
-            var note = FromDto(noteDto);
-            note.Id = id;
-            await _repository.UpdateAsync(note);
+            if (noteDto == null)
+                throw new ArgumentNullException(nameof(noteDto));
+            // Récupérer la note existante
+            var existingNote = await _repository.GetByIdAsync(id);
+            //if (existingNote == null)
+            //    throw new Exception("Note non trouvée.");
+
+            // Mettre à jour uniquement les champs fournis
+            if (!string.IsNullOrEmpty(noteDto.Content))
+                existingNote.Content = noteDto.Content;
+
+            // Sauvegarder les modifications
+            await _repository.UpdateAsync(existingNote);
         }
 
         public async Task DeleteNoteAsync(string id)
         {
-            await _repository.DeleteAsync(id);
+            var objectId = MongoDB.Bson.ObjectId.Parse(id);
+            await _repository.DeleteAsync(objectId.ToString());
         }
 
         private static NoteDto ToDto(Note note) => new NoteDto
