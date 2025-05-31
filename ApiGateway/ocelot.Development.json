@@ -11,12 +11,7 @@
       ],
       "UpstreamPathTemplate": "/api/auth/login",
       "UpstreamHttpMethod": [ "POST", "OPTIONS" ],
-      "DownstreamHttpMethod": [ "POST", "OPTIONS" ],
-      "CorsPolicy": "AllowReactApp",
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": []
-      }
+      "CorsPolicy": "AllowReactApp"
     },
     {
       "DownstreamPathTemplate": "/api/auth/{everything}",
@@ -29,12 +24,7 @@
       ],
       "UpstreamPathTemplate": "/api/auth/{everything}",
       "UpstreamHttpMethod": [ "POST", "OPTIONS" ],
-      "DownstreamHttpMethod": [ "POST", "OPTIONS" ],
-      "CorsPolicy": "AllowReactApp",
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": []
-      }
+      "CorsPolicy": "AllowReactApp"
     },
     {
       "DownstreamPathTemplate": "/api/patients",
