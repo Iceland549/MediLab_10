@@ -1,0 +1,22 @@
+# .NET build artifacts
+bin/
+obj/
+*.user
+*.suo
+
+# Logs
+*.log
+
+# Secrets, certificates 
+secrets/
+*.pfx
+*.cert
+
+# Visual Studio files
+.vs/
+
+# Git and tools
+.git/
+.gitignore
+docker-compose*
+README.md
