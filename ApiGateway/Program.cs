@@ -7,6 +7,10 @@ using Ocelot.Configuration.Repository;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.WebHost.UseUrls("http://+:5000");
+
+
 Console.WriteLine($"Environment: {builder.Environment.EnvironmentName}");
 builder.Configuration
     .SetBasePath(builder.Environment.ContentRootPath)
@@ -70,7 +74,7 @@ builder.Services.AddOcelot(builder.Configuration);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsProduction()) 
 {
     app.UseSwagger();
     app.UseSwaggerUI();
