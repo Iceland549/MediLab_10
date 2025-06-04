@@ -1,0 +1,141 @@
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - SA_PASSWORD=Patient_password123
+      - ACCEPT_EULA=Y
+    ports:
+      - "1433:1433"
+    networks:
+      - medi-net
+    healthcheck:
+      test: ["CMD", "bash", "-c", "echo > /dev/tcp/localhost/1433"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 40s
+
+  mongo:
+    image: mongo:6.0
+    ports:
+      - "27017:27017"
+    networks:
+      - medi-net
+
+
+  auth:
+    build:
+      context: .
+      dockerfile: AuthMicroservice/Dockerfile
+    environment:
+      - ASPNETCORE_URLS=http://+:5001
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=MediLabAuthDb;User Id=sa;Password=Patient_password123;TrustServerCertificate=True
+      - Jwt__Key=Qw3!t9z@LkP#5sV8$eY1uR6&xH2mN0aB7jT4fGzP
+      - Jwt__Issuer=MediLabAuth
+      - Jwt__Audience=MediLabApiUsers
+      - ADMIN_USERNAME=admin
+      - ADMIN_PASSWORD=Admin123! 
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    ports:
+      - "5001:5001"
+    networks:
+      - medi-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/api/auth/login"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    volumes:
+      - ./keys:/root/.aspnet/DataProtection-Keys
+
+  patient:
+    build:
+      context: .
+      dockerfile: PatientMicroservice/Dockerfile
+    environment:
+      - ASPNETCORE_URLS=http://+:5002
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=MediLabPatientDb;User Id=sa;Password=Patient_password123;TrustServerCertificate=True
+      - Jwt__Key=Qw3!t9z@LkP#5sV8$eY1uR6&xH2mN0aB7jT4fGzP
+      - Jwt__Issuer=MediLabAuth
+      - Jwt__Audience=MediLabApiUsers
+    depends_on:
+      - sqlserver
+    ports:
+      - "5002:5002"
+    networks:
+      - medi-net
+
+  note:
+    build:
+      context: .
+      dockerfile: NoteMicroservice/Dockerfile
+    environment:
+      - ASPNETCORE_URLS=http://+:5003
+      - MongoDb__ConnectionString=mongodb://mongo:27017
+      - MongoDb__Database=NotesDb
+      - Jwt__Key=Qw3!t9z@LkP#5sV8$eY1uR6&xH2mN0aB7jT4fGzP
+      - Jwt__Issuer=MediLabAuth
+      - Jwt__Audience=MediLabApiUsers
+    depends_on:
+      - mongo
+    ports:
+      - "5003:5003"
+    networks:
+      - medi-net
+
+  risk:
+    build:
+      context: .
+      dockerfile: RiskMicroservice/Dockerfile
+    environment:
+      - ASPNETCORE_URLS=http://+:5004
+      - NoteMicroserviceBaseUrl=http://note:5003
+      - PatientMicroserviceBaseUrl=http://patient:5002
+      - Jwt__Key=Qw3!t9z@LkP#5sV8$eY1uR6&xH2mN0aB7jT4fGzP
+      - Jwt__Issuer=MediLabAuth
+      - Jwt__Audience=MediLabApiUsers
+    depends_on:
+      - note
+      - patient
+    ports:
+      - "5004:5004"
+    networks:
+      - medi-net
+
+  gateway:
+    build:
+      context: .
+      dockerfile: ApiGateway/Dockerfile
+    environment:
+      - ASPNETCORE_URLS=http://+:5000
+      - Jwt__Key=Qw3!t9z@LkP#5sV8$eY1uR6&xH2mN0aB7jT4fGzP
+      - Jwt__Issuer=MediLabAuth
+      - Jwt__Audience=MediLabApiUsers
+      - ASPNETCORE_ENVIRONMENT=Production
+    depends_on:
+      - auth
+      - patient
+      - note
+      - risk
+    ports:
+      - "5000:5000"
+    networks:
+      - medi-net
+
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    networks:
+      - medi-net
+
+
+networks:
+  medi-net:
+    driver: bridge
