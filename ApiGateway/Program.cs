@@ -8,27 +8,30 @@ using Ocelot.Configuration.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure the gateway to listen on port 5000.
 builder.WebHost.UseUrls("http://+:5000");
 
-
-Console.WriteLine($"Environment: {builder.Environment.EnvironmentName}");
+// Load Ocelot configuration from JSON files.
 builder.Configuration
     .SetBasePath(builder.Environment.ContentRootPath)
     .AddJsonFile("ocelot.json", optional: false, reloadOnChange: true)
-    .AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
-Console.WriteLine("Loaded Ocelot routes:");
-var routes = builder.Configuration.GetSection("Routes").Get<List<object>>();
-foreach (var route in routes ?? new List<object>())
-{
-    Console.WriteLine(route);
-}
+    .AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}" +
+    $".json", optional: true, reloadOnChange: true);
+
+builder.Services.AddOcelot(builder.Configuration);
+
+// Load routes from the configuration file.
+builder.Configuration.GetSection("Routes").Get<List<object>>();
+
+// Retrieve JWT parameters from configuration.
 var jwtKey = builder.Configuration["Jwt:Key"];
 var jwtIssuer = builder.Configuration["Jwt:Issuer"];
 var jwtAudience = builder.Configuration["Jwt:Audience"];
 if (string.IsNullOrWhiteSpace(jwtKey))
-    throw new InvalidOperationException("JWT secret key (Jwt:Key) is not configured in appsettings.json.");
+    throw new InvalidOperationException(
+        "JWT secret key (Jwt:Key) is not configured in appsettings.json.");
 
-
+// Configure JWT authentication to secure API endpoints.
 builder.Services.AddAuthentication()
     .AddJwtBearer("Bearer", options =>
     {
@@ -69,7 +72,6 @@ builder.Services.AddSwaggerGen();
 var ocelotConfig = builder.Configuration.GetSection("Routes").Get<List<object>>();
 
 
-builder.Services.AddOcelot(builder.Configuration);
 
 var app = builder.Build();
 
@@ -82,7 +84,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 
 app.UseCors("AllowReactApp");
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

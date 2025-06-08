@@ -9,10 +9,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Configure MongoDB connection
 builder.Services.Configure<MongoDbConfig>(
     builder.Configuration.GetSection("MongoDbConfig"));
 
+// Injection of dependencies for services and repositories
 builder.Services.AddScoped<INoteRepository, NoteRepository>();
 builder.Services.AddScoped<INoteService, NoteService>();
 
@@ -71,6 +72,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+// Seed the database with initial data
 using (var scope = app.Services.CreateScope())
 {
     var seeder = scope.ServiceProvider.GetRequiredService<NotesSeeder>();

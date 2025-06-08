@@ -8,7 +8,7 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Injection of dependencies for services and clients
 builder.Services.AddScoped<IRiskService,RiskService>();
 builder.Services.AddHttpClient<IPatientClient, PatientClient>();
 builder.Services.AddHttpClient<INoteClient, NoteClient>();
