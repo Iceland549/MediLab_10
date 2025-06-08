@@ -23,9 +23,10 @@ namespace RiskMicroservice.Application.Services
             _noteClient = noteClient;
         }
 
-        private static readonly string[] Triggers = new[]
+        private static readonly string[] triggers = new[]
         {
-            "Hémoglobine A1C", "Microalbumine", "Poids", "Taille", "Fumeur", "Fumer", "Fume", "Anormale", "Anormales", "Cholestérol", "Vertige", "Rechute", "Réaction", "Anticorps"
+            "Hémoglobine A1C", "Microalbumine", "Poids", "Taille", "Fumeur", "Fumer", "Fume", 
+            "Anormale", "Anormales", "Cholestérol", "Vertige", "Rechute", "Réaction", "Anticorps"
         };
 
         public async Task<RiskAssessmentDto?> AssessmentRiskAsync(int patientId, string jwtToken)
@@ -38,14 +39,14 @@ namespace RiskMicroservice.Application.Services
             if (patient.DateOfBirth > today.AddYears(-age)) age--;
 
             var notes = await _noteClient.GetNotesByPatientIdAsync(patientId, jwtToken);
-            // Extraire le contenu des notes dans une liste de string
+
             List<string> noteContents = notes
                 .Where(note => note.Content != null)
                 .Select(note => note.Content!)
                 .ToList();
 
             int triggerCount = noteContents
-                .SelectMany(content => Triggers.Where(trigger =>
+                .SelectMany(content => triggers.Where(trigger =>
                     content.IndexOf(trigger, StringComparison.OrdinalIgnoreCase) >= 0))
                 .Count();
 
@@ -66,7 +67,7 @@ namespace RiskMicroservice.Application.Services
 
         private static string CalculateRiskLevel(int age, string gender, int triggerCount)
         {
-            // Prise en compte simultanée de l'âge, du sexe et du nombre de triggers
+            // Calculates a value by simultaneously considering age, sex, and the number of triggers.
             if (triggerCount == 0) return "None";
 
             // Early onset
